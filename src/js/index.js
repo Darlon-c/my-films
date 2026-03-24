@@ -9,6 +9,15 @@ const key = "a766a8b2";
 let currentMovie = null;
 let watchLater = [];
 
+function loadStorage() {
+  const saveData = localStorage.getItem("movie");
+
+  if (saveData) {
+    watchLater = JSON.parse(saveData);
+  }
+}
+
+// consumindo a api e exibindo o filme pesquisado na tela
 async function getFilms() {
   if (searchFilm.value === "") {
     alert("Informe o nome do filme");
@@ -39,20 +48,29 @@ async function getFilms() {
     console.log(error);
   }
 }
-
+// adicionando no array
 function addWatchLater() {
-  watchLater.push(currentMovie);
-  console.log(currentMovie);
-  Swal.fire("Adicionado em assistir mais tarde");
+  const exist = watchLater.some(
+    (movie) => movie.imdbID === currentMovie.imdbID,
+  );
+
+  if (!exist) {
+    watchLater.push(currentMovie);
+    saveStorage();
+    Swal.fire("Adicionado em assistir mais tarde");
+  } else {
+    Swal.fire("Este filme já está na sua lista!");
+  }
 }
 
+// mostrar marcados com assistir mais tarde
 function showMovie() {
   const render = watchLater.map((movie) => {
     return `
             <div>
                 <div class="flex justify-between">
                     <h2>${movie.Title} (${movie.Year})</h2>
-                    <button class="bg-red-600" onclick="removeMovie(${movie.imdbID})">X</button>
+                    <button class="bg-red-600" onclick="removeMovie('${movie.imdbID}')">X</button>
                 </div>
                 <img src="${movie.Poster}" alt="${movie.Title}">
                 <p><strong>Diretor:</strong> ${movie.Director}</p>
@@ -70,9 +88,10 @@ function showMovie() {
   });
 
   movieSelected.innerHTML = render.join("");
-  initStarRating()
+  initStarRating();
 }
 
+// configuração da avaliação
 function initStarRating() {
   if (typeof StarRating !== "undefined") {
     new StarRating(".star-rating", {
@@ -81,21 +100,28 @@ function initStarRating() {
         base: "gl-star-rating",
         selected: "gl-selected",
       },
-      clearable: true, 
-      maxStars: 5, 
+      clearable: true,
+      maxStars: 5,
       prebuilt: false,
       stars: null,
-      tooltip: "Clique para avaliar", 
+      tooltip: "Clique para avaliar",
     });
   }
 }
 
+// remover de assistir mais tarde
 function removeMovie(imdbID) {
   watchLater = watchLater.filter((movie) => {
-    return movie.imdID !== imdbID;
+    return movie.imdbID !== imdbID;
   });
   showMovie();
+  saveStorage();
 }
 
+function saveStorage() {
+  localStorage.setItem("movie", JSON.stringify(watchLater));
+}
+
+loadStorage();
 btnWatchLater.addEventListener("click", showMovie);
 btnSearch.addEventListener("click", getFilms);
