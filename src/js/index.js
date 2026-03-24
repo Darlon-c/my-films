@@ -3,8 +3,8 @@ const searchFilm = document.getElementById("searchFilm");
 const btnSearch = document.getElementById("btnSearch");
 
 const key = "a766a8b2";
-let favoritesMovies = []
-
+let currentMovie = null;
+let watchLater = [];
 
 async function getFilms() {
   if (searchFilm.value === "") {
@@ -16,26 +16,30 @@ async function getFilms() {
 
   try {
     const response = await fetch(
-      `http://www.omdbapi.com/?apikey=${key}&s=${film}`,
+      `http://www.omdbapi.com/?apikey=${key}&t=${film}`,
     );
     const data = await response.json();
 
-    console.log(data);
+    currentMovie = data;
 
-    const filmesHTML = data.Search.map(
-      (films) => `
-            <div class="flex items-center flex-col  border gap-4 rounded-lg">
-                <h2 class="text-xl font-bold">${films.Title} (${films.Year})</h2>
-                <img src="${films.Poster !== "N/A" ? films.Poster : "https://via.placeholder.com/300x450?text=Sem+Imagem"}" 
-                     alt="${films.Title}" class="w-40">
+    result.innerHTML = `
+            <div>
+                <h2>${data.Title} (${data.Year})</h2>
+                <img src="${data.Poster}" alt="${data.Title}">
+                <p><strong>Diretor:</strong> ${data.Director}</p>
+                <p><strong>Gênero:</strong> ${data.Genre}</p>
+                <p><strong>Nota:</strong> ${data.imdbRating}</p>
+                <button class="border" onclick="addWatchLater()">Assistir mais tarde</button>
             </div>
-        `,
-    ).join("");
-
-    result.innerHTML = filmesHTML;
+            `;
   } catch (error) {
     console.log(error);
   }
+}
+
+function addWatchLater() {
+    watchLater.push(currentMovie)
+    console.log(watchLater)
 }
 
 btnSearch.addEventListener("click", getFilms);
