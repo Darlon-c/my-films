@@ -1,6 +1,8 @@
 const result = document.getElementById("result");
 const searchFilm = document.getElementById("searchFilm");
 const btnSearch = document.getElementById("btnSearch");
+const btnWatchLater = document.getElementById("btnWatchLater");
+const movieSelected = document.getElementById("movieSelected");
 
 const key = "a766a8b2";
 let currentMovie = null;
@@ -42,4 +44,21 @@ function addWatchLater() {
     console.log(watchLater)
 }
 
+function showMovie() {
+    const render = watchLater.map((movie) => {
+        return `
+            <div>
+                <h2>${movie.Title} (${movie.Year})</h2>
+                <img src="${movie.Poster}" alt="${movie.Title}">
+                <p><strong>Diretor:</strong> ${movie.Director}</p>
+                <p><strong>Gênero:</strong> ${movie.Genre}</p>
+                <p><strong>Nota:</strong> ${movie.imdbRating}</p>
+            </div>
+            `;
+    })
+
+    movieSelected.innerHTML = render.join("")
+}
+
+btnWatchLater.addEventListener('click', showMovie)
 btnSearch.addEventListener("click", getFilms);

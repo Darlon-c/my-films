@@ -16,12 +16,19 @@
     </style>
   </head>
   <body>
-    <section>
-      <input class="border" type="text" id="searchFilm" />
-      <button id="btnSearch">Buscar</button>
-    </section>
+    <main class="grid grid-cols-2">
+      <section>
+        <input class="border" type="text" id="searchFilm" />
+        <button id="btnSearch">Buscar</button>
+        <div class="grid grid-cols-5" id="result"></div>
+      </section>
 
-    <div class="grid grid-cols-5" id="result"></div>
+      <section>
+        <button id="btnWatchLater">Marcados como assistir depois</button>
+        <div id="movieSelected"></div>
+      </section>
+    </main>
+
     <script src="./src/js/index.js"></script>
   </body>
 </html>
